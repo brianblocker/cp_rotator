@@ -140,6 +140,7 @@
 
 $( function() {
   $( '.rotator' ).cp_slidshow({
+    delay : 6000,
     loop : 1,
     stopAt : 0
   });
