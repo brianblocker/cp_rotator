@@ -1,31 +1,42 @@
+/*****
+ *  cp_rotator
+ *
+ *  Author: @brianblocker
+ *  (c) CloudPassage, Inc.
+ *
+ *  Provides a simple slideshow with basic customization. Uses CSS3 transitions.
+ *  Relies on Modernizr for feature detection, gracefully degrading to javascript animation when CSS3 transitions aren't supported.
+ *****/
+
 ( function( $ ) {
   "use_strict";
 
-  $.fn.cp_slidshow = function( method ) {
+  $.fn.cp_rotator = function( method ) {
     if ( methods[ method ] )
       return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ) );
     else if ( typeof method === 'object' || ! method )
       return methods.init.apply( this, arguments );
     else
-      $.error( method + ' is not a valid argument for cp_slidshow.' );
+      $.error( method + ' is not a valid argument for cp_rotator.' );
   }
 
-  $.fn.cp_slidshow.defaults = {
+  $.fn.cp_rotator.defaults = {
     delay       : 5000, // time in ms (1000 = 1 second)
     autoplay    : true, // true to auto rotate, false to pause
     pauseHover  : true, // true to pause when the mouse is over the slideshow
+    stopOnClick : false, // true to stop autoplay when a specific banner is clicked
     loop        : 0, // # of times to loop through. Any number less than 1 will loop infinitely
     stopAt      : 0, // int|'first'|'last'. The index of the slide to stop on when the loop is done. Anything less than 0 will be treated as 'last'. String values can be 'first' or 'last'
     beforeChange  : new Function, // callback before slide changes
     change      : new Function, // callback when slide changes
-    stop      : new Function, // callback for when slideshow is stopped/paused
+    stop      : new Function // callback for when slideshow is stopped/paused
   };
 
   var methods = {
     init : function( options ) {
       return this.each( function() {
         var $this = $( this )
-        ,   opts  = $.extend( {}, $.fn.cp_slidshow.defaults, options )
+        ,   opts  = $.extend( {}, $.fn.cp_rotator.defaults, options )
 
         setupListeners( $this, opts );
       });
@@ -34,7 +45,7 @@
       return getValues( this );
     },
     destroy : function() {
-      $( document ).off( '.cp_slidshow' );
+      $( document ).off( '.cp_rotator' );
 
       return this;
     }
@@ -55,7 +66,7 @@
         stop = $content.last().index();
     }
 
-    $rotator.on( 'mouseenter', function() {
+    $rotator.on( 'mouseenter.cp_rotator', function() {
       hovering = true;
 
       if ( timer )
@@ -64,12 +75,12 @@
       timer = false;
     });
 
-    $rotator.on( 'mouseleave', function() {
+    $rotator.on( 'mouseleave.cp_rotator', function() {
       hovering = false;
       $rotator.trigger( 'countdown' )
     })
 
-    $rotator.on( 'change', function( e, opts ) {
+    $rotator.on( 'change.cp_rotator', function( e, opts ) {
       opts = opts || {};
       opts.callback = opts.callback || function( $prev, $current ){}
 
@@ -107,7 +118,7 @@
       opts.callback( $current, $next )
     })
 
-    $rotator.on( 'countdown', function() {
+    $rotator.on( 'countdown.cp_rotator', function() {
       if ( options.autoplay && ! hovering && ! done ) {
         timer = setTimeout( function() {
           $rotator.trigger( 'change', { callback : function( $next, $curr ) {
@@ -126,10 +137,13 @@
       }
     })
 
-    $nav.on( 'click', 'UL LI A:not(.active)', function( e ) {
+    $rotator.on( 'click.cp_rotator', 'NAV UL LI A:not(.active)', function( e ) {
       var $this = $( e.target ).closest( 'A' )
       ,   $parent = $this.closest( 'LI' )
       ,   index = $parent.index()
+
+      if ( options.stopOnClick )
+        done = true;
 
       $rotator.trigger( 'change', { index : index } );
     });
@@ -139,9 +153,10 @@
 })( window.jQuery || window.Zepto );
 
 $( function() {
-  $( '.rotator' ).cp_slidshow({
-    delay : 6000,
+  $( '.rotator' ).cp_rotator({
+    delay : 5000,
     loop : 1,
-    stopAt : 0
+    stopAt : 0,
+    stopOnClick : true
   });
 });
