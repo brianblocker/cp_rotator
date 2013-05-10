@@ -3,7 +3,7 @@ cp_rotator
 
 Just a little rotator used for the CP homepage.
 
-
-[code]
-test
-[/code]
+Usage:
+```javascript
+jQuery( selector ).cp_slideshow( options );
+```
