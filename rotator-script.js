@@ -39,7 +39,9 @@
         var $this = $( this )
         ,   opts  = $.extend( {}, $.fn.cp_rotator.defaults, options )
         
-        setupArrows( $this, opts.arrows )
+        if ( opts.arrows )
+          setupArrows( $this, opts.arrows )
+        
         setupListeners( $this, opts );
       });
     },
@@ -54,6 +56,11 @@
   },
   setupArrows = function( $rotator, options ) {
     // todo: add arrows
+    var $content = $rotator.find( 'DIV.content' )
+    ,   $left_arrow = $( '<SPAN class="arrow left" />' )
+    ,   $right_arrow = $left_arrow.clone().removeClass( 'left' ).addClass( 'right' );
+    
+    $content.append( $left_arrow, $right_arrow )
   },
   setupListeners = function( $rotator, options ) {
     var $nav = $rotator.find( 'NAV' )
