@@ -29,7 +29,8 @@
     stopAt      : 0, // int|'first'|'last'. The index of the slide to stop on when the loop is done. Anything less than 0 will be treated as 'last'. String values can be 'first' or 'last'
     beforeChange  : new Function, // callback before slide changes
     change      : new Function, // callback when slide changes
-    stop      : new Function // callback for when slideshow is stopped/paused
+    stop        : new Function, // callback for when slideshow is stopped/paused
+    arrows      : false // false, 'together', 'split'
   };
 
   var methods = {
@@ -37,7 +38,8 @@
       return this.each( function() {
         var $this = $( this )
         ,   opts  = $.extend( {}, $.fn.cp_rotator.defaults, options )
-
+        
+        setupArrows( $this, opts.arrows )
         setupListeners( $this, opts );
       });
     },
@@ -49,6 +51,9 @@
 
       return this;
     }
+  },
+  setupArrows = function( $rotator, options ) {
+    // todo: add arrows
   },
   setupListeners = function( $rotator, options ) {
     var $nav = $rotator.find( 'NAV' )
